@@ -33,10 +33,10 @@ fitRSquared = zeros(nNeuron, 1);
 rSquaredAvg = zeros(nNeuron, 1);
 fitPara = zeros(nNeuron, nParas);
 
-files = dir('./SpeedData/*.mat');
+files = dir('./DeAngelis/*.mat');
 idx = 1;
 for file = files'
-    neurData = load(fullfile('./SpeedData', file.name));
+    neurData = load(fullfile('./DeAngelis', file.name));
     
     if showPlot
         figure();

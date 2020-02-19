@@ -1,6 +1,7 @@
 %% Single neuron example
 nNeuron = 470;
 nParas  = 5;
+load('./fitPara_gauss.mat');
 
 idx = randi(nNeuron);
 parameter = fitPara(idx, :);
@@ -9,6 +10,8 @@ tuning = @(stim) tuningGauss(parameter(1), parameter(2), parameter(3), parameter
 
 xRange = 0.1 : 0.01 : 50;
 [fx, dfdx] = tuning(xRange);
+fisher = (dfdx .^ 2) ./ fx;
+
 numDiff = gradient(fx, xRange);
 
 figure(); subplot(1, 2, 1); hold on;
@@ -16,13 +19,21 @@ plot(xRange, fx, '-k', 'LineWidth', 2);
 plot(xRange, dfdx, '-k', 'LineWidth', 2);
 plot(xRange, numDiff, '--r', 'LineWidth', 2);
 
+subplot(1, 2, 2);
+plot(xRange, fisher, '-k', 'LineWidth', 2);
 
-transformed = log(xRange + 0.3);
+% transformed = log(xRange + 0.3);
+transformed = cumtrapz(xRange, sqrt(fisher));
 numDiff = gradient(fx, transformed);
+fisher = (numDiff .^ 2) ./ fx;
 
-subplot(1, 2, 2); hold on;
+figure();
+subplot(1, 2, 1); hold on;
 plot(transformed, fx, '-k', 'LineWidth', 2);
 plot(transformed, numDiff, '--r', 'LineWidth', 2);
+
+subplot(1, 2, 2);
+plot(transformed, fisher, '-k', 'LineWidth', 2);
 
 %% Analysis for all the neurons
 xRange = 0.1 : 0.01 : 50;
@@ -57,15 +68,18 @@ plot(transformed, totalTrans ./ trapz(transformed, totalTrans), 'k', 'LineWidth'
 ylim([0, 1]);
 
 %% CDF transformation
-transformed = cumtrapz(xRange, totalFisher);
+transformed = cumtrapz(xRange, totalFisher ./ trapz(xRange, totalFisher));
+numDiff = gradient(xRange, transformed);
 
 figure();
-plot(xRange, transformed, '-k', 'LineWidth', 2);
+plot(xRange, totalFisher .* numDiff, '-k', 'LineWidth', 2);
 
+totalTrans  = zeros(1, length(xRange));
 for idx = 1 : nNeuron
     parameter = fitPara(idx, :);
     tuning = @(stim) tuningGauss(parameter(1), parameter(2), parameter(3), parameter(4), parameter(5), stim);
 
+    fx = tuning(xRange);
     numDiff = gradient(fx, transformed);
     fisher = abs(numDiff) ./ sqrt(fx);
     totalTrans = totalTrans + fisher .^ 2;
@@ -73,4 +87,6 @@ end
 totalTrans = sqrt(totalTrans);
 
 figure();
-plot(transformed, totalTrans, 'k', 'LineWidth', 2);
+plot(transformed, totalTrans ./ (trapz(transformed, totalTrans)), 'k', 'LineWidth', 2);
+xlim([0, 1]);
+ylim([0.5, 1.5]);
