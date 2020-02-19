@@ -1,6 +1,5 @@
 %% Single neuron example
 nNeuron = 470;
-nParas  = 5;
 load('./fitPara_gauss.mat');
 
 idx = randi(nNeuron);
@@ -37,7 +36,6 @@ plot(transformed, fisher, '-k', 'LineWidth', 2);
 
 %% Analysis for all the neurons
 nNeuron = 470;
-nParas  = 5;
 load('./fitPara_gauss.mat');
 
 xRange = 0.1 : 0.01 : 50;
