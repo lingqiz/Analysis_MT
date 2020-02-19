@@ -118,11 +118,15 @@ plot(transformed, totalTrans ./ (trapz(transformed, totalTrans)), 'k', 'LineWidt
 xlim([0, 1]);
 ylim([0.0, 2.0]);
 
+set(gca,'box','off');
+set(gca,'TickDir','out');
+xticks(0 : 0.2 : 1); xlabel('v tilde');
+yticks(0 : 0.4 : 2.0); ylabel('fisher info');
+
 %% Helper function
 function prior = priorHandle(para)
 
 c0 = para(1); c1 = para(2); c2 = para(3);
-
 domain = 0.1 : 0.01 : 50;
 
 priorUnm  = 1.0 ./ ((abs(domain) .^ c0) + c1) + c2;

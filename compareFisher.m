@@ -18,6 +18,7 @@ l2 = plotPrior(paraSub, true, false, '-', ones(1, 3) * 0.1);
 
 priorXlim = xlim();
 set(gcf,'Position',[0, 0, 600, 500]);
+set(gca,'TickDir','out');
 
 %% Add fisher information 1
 % Fisher information with Gamma tuning curve
