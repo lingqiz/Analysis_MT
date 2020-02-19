@@ -1,5 +1,5 @@
 %% Fit to a single neuron
-neurData = load('./SpeedData/m1c125r2.mat');
+neurData = load('./DeAngelis/m1c125r2.mat');
 
 figure();
 scatter(neurData.speed_values, neurData.response_values, 'k');

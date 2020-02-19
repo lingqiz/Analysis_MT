@@ -68,8 +68,9 @@ for idx = 1 : nNeuron
 
     numDiff = gradient(fx, transformed);
     fisher = abs(numDiff) ./ sqrt(fx);
-    totalTrans = totalTrans + fisher;
+    totalTrans = totalTrans + fisher .^ 2;
 end
+totalTrans = sqrt(totalTrans);
 
 figure();
 plot(transformed, totalTrans, 'k', 'LineWidth', 2);
