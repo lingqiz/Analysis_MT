@@ -14,7 +14,6 @@ for i = 1 : nSub
 end
 
 load('CombinedFit/combinedMapping.mat');
-
 l2 = plotPrior(paraSub, true, false, '-', ones(1, 3) * 0.1);
 
 priorXlim = xlim();

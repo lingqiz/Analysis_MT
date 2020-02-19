@@ -36,6 +36,10 @@ subplot(1, 2, 2);
 plot(transformed, fisher, '-k', 'LineWidth', 2);
 
 %% Analysis for all the neurons
+nNeuron = 470;
+nParas  = 5;
+load('./fitPara_gauss.mat');
+
 xRange = 0.1 : 0.01 : 50;
 transformed = log(xRange + 1);
 
@@ -73,12 +77,13 @@ numDiff = gradient(xRange, transformed);
 
 figure();
 plot(xRange, totalFisher .* numDiff, '-k', 'LineWidth', 2);
+ylim([350, 450]);
 
 totalTrans  = zeros(1, length(xRange));
 for idx = 1 : nNeuron
     parameter = fitPara(idx, :);
     tuning = @(stim) tuningGauss(parameter(1), parameter(2), parameter(3), parameter(4), parameter(5), stim);
-
+    
     fx = tuning(xRange);
     numDiff = gradient(fx, transformed);
     fisher = abs(numDiff) ./ sqrt(fx);
@@ -90,3 +95,38 @@ figure();
 plot(transformed, totalTrans ./ (trapz(transformed, totalTrans)), 'k', 'LineWidth', 2);
 xlim([0, 1]);
 ylim([0.5, 1.5]);
+
+%% Prior transformation
+load('CombinedFit/combinedMapping.mat');
+prior = priorHandle(paraSub);
+transformed = cumtrapz(xRange, prior(xRange));
+
+totalTrans  = zeros(1, length(xRange));
+for idx = 1 : nNeuron
+    parameter = fitPara(idx, :);
+    tuning = @(stim) tuningGauss(parameter(1), parameter(2), parameter(3), parameter(4), parameter(5), stim);
+    
+    fx = tuning(xRange);
+    numDiff = gradient(fx, transformed);
+    fisher = abs(numDiff) ./ sqrt(fx);
+    totalTrans = totalTrans + fisher .^ 2;
+end
+totalTrans = sqrt(totalTrans);
+
+figure();
+plot(transformed, totalTrans ./ (trapz(transformed, totalTrans)), 'k', 'LineWidth', 2);
+xlim([0, 1]);
+ylim([0.0, 2.0]);
+
+%% Helper function
+function prior = priorHandle(para)
+
+c0 = para(1); c1 = para(2); c2 = para(3);
+
+domain = 0.1 : 0.01 : 50;
+
+priorUnm  = 1.0 ./ ((abs(domain) .^ c0) + c1) + c2;
+nrmConst  = 1.0 / (trapz(domain, priorUnm));
+prior = @(support) (1.0 ./ ((abs(support) .^ c0) + c1) + c2) * nrmConst;
+
+end
