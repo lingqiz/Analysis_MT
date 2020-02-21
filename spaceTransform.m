@@ -40,6 +40,7 @@ load('./fitPara_gauss.mat');
 
 xRange = 0.1 : 0.01 : 50;
 transformed = log(xRange + 1);
+% transformed = 2 * atan(xRange + 1);
 
 totalFisher = zeros(1, length(xRange));
 totalTrans  = zeros(1, length(xRange));
