@@ -1,4 +1,7 @@
-function [parameter, func, rSquared] = fitGauss(speed, response, lossOption, optOption)
+function [parameter, func, rSquared] = fitGauss(speed, response, lossOption, optOption, nRand)
+if ~exist('nRand', 'var')
+    nRand = 0;
+end
 
 if strcmp(lossOption, 'poiss')
     poissLL = @(measure, lambda) measure .* log(lambda) - lambda;
@@ -24,7 +27,6 @@ else
     [parameter, fval] = fminsearchbnd(loss, paraInit, paraLB, paraUB, opts);
 end
 
-nRand = 0;
 for idx = 1 : nRand
     if strcmp(optOption, 'fmincon')
         [parameterNew, fvalNew] = fmincon(loss, paraInit + rand(1, 5) * 10, [], [], [], [], paraLB, paraUB, [], options);

@@ -12,14 +12,13 @@ end
 
 %% Fit to a single neuron
 idx = randi(nNeuron);
-% idx = 141;
 neurData = neuroFile{idx};
 
 figure();
 yyaxis left
 scatter(neurData.speed_values, neurData.response_values, 200, 'k', 'LineWidth', 1);
 
-[parameter, func] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch');
+[parameter, func] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch', 10);
 
 axisLim = xlim;
 xRange = 0.0 : 0.05 : 35;
@@ -60,7 +59,8 @@ for file = files'
         scatter(neurData.speed_values, neurData.response_values, 'k');
     end
     
-    [parameter, func, rSquared] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch');
+    nRand = 10;
+    [parameter, func, rSquared] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch', nRand);
     fitRSquared(idx) = rSquared;
     fitPara(idx, :) = parameter;
     
