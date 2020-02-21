@@ -1,28 +1,45 @@
+%% Load neurons
+nNeuron = 470;
+
+neuroFile = cell(nNeuron, 1);
+files = dir('./DeAngelis/*.mat');
+
+idx = 1;
+for file = files'
+    neuroFile{idx} = load(fullfile('./DeAngelis', file.name));
+    idx = idx + 1;
+end
+
 %% Fit to a single neuron
-neurData = load('./DeAngelis/m1c125r2.mat');
+idx = randi(nNeuron);
+% idx = 141;
+neurData = neuroFile{idx};
 
 figure();
-scatter(neurData.speed_values, neurData.response_values, 'k');
+yyaxis left
+scatter(neurData.speed_values, neurData.response_values, 200, 'k', 'LineWidth', 1);
 
 [parameter, func] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch');
 
 axisLim = xlim;
-xRange = axisLim(1) : 0.05 : axisLim(2);
+xRange = 0.0 : 0.05 : 35;
 
 hold on;
-plot(xRange, func(xRange), 'k', 'LineWidth', 1);
+plot(xRange, func(xRange), '-k', 'LineWidth', 2);
+set(gca, 'TickDir', 'out');
 
 % Differentiation
+xRange = 0.5 : 0.05 : 35;
 [fx, dfdx] = func(xRange);
+plot(xRange, dfdx, '--r', 'LineWidth', 2);
 
-figure();
-plot(xRange, fx, '-k'); hold on;
-plot(xRange, dfdx, '--k');
+xticks(5 : 10 : 35);
+xlim([-1, 35]);
 
 % Fisher information
-figure();
+yyaxis right
 fisher = abs(dfdx) ./ sqrt(fx);
-plot(xRange, fisher, '-k');
+plot(xRange, fisher .^ 2, '-r', 'LineWidth', 2);
 
 %% Fit to the entire population of neurons
 nNeuron = 470;
@@ -64,7 +81,8 @@ for file = files'
         plot(xRange, func(xRange), 'k', 'LineWidth', 1);
     end
     
-    idx = idx + 1;
+    idx = idx + 1;    
+    
 end
 
 %% Goodness-of-fit/R-squared

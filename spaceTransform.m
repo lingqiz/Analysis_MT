@@ -94,6 +94,7 @@ plot(transformed, totalTrans ./ (trapz(transformed, totalTrans)), 'k', 'LineWidt
 xlim([0, 1]);
 ylim([0.5, 1.5]);
 
+
 %% Prior transformation
 load('CombinedFit/combinedMapping.mat');
 prior = priorHandle(paraSub);
