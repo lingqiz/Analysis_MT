@@ -57,7 +57,7 @@ load('fitPara_gauss.mat');
 nNeuron = 470;
 nParas  = 5;
 
-xRange = 0.005 : 0.001 : 100;
+xRange = 0.01 : 0.001 : 100;
 totalFisher = zeros(1, length(xRange));
 
 for idx = 1 : nNeuron

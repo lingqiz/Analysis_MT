@@ -18,7 +18,8 @@ figure();
 yyaxis left
 scatter(neurData.speed_values, neurData.response_values, 200, 'k', 'LineWidth', 1);
 
-[parameter, func] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch', 10);
+nRand = 0;
+[parameter, func] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch', nRand);
 
 axisLim = xlim;
 xRange = 0.0 : 0.05 : 35;
@@ -59,7 +60,7 @@ for file = files'
         scatter(neurData.speed_values, neurData.response_values, 'k');
     end
     
-    nRand = 10;
+    nRand = 20;
     [parameter, func, rSquared] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch', nRand);
     fitRSquared(idx) = rSquared;
     fitPara(idx, :) = parameter;
