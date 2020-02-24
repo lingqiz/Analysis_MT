@@ -60,7 +60,7 @@ for file = files'
         scatter(neurData.speed_values, neurData.response_values, 'k');
     end
     
-    nRand = 20;
+    nRand = 5;
     [parameter, func, rSquared] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch', nRand);
     fitRSquared(idx) = rSquared;
     fitPara(idx, :) = parameter;
@@ -82,7 +82,7 @@ for file = files'
         plot(xRange, func(xRange), 'k', 'LineWidth', 1);
     end
     
-    idx = idx + 1;    
+    idx = idx + 1;
     
 end
 
@@ -145,3 +145,31 @@ subplot(1, 2, 2);
 plot(log(xRange), log(totalFisher), '-k', 'LineWidth', 2);
 
 fitlm(log(xRange'), log(totalFisher'))
+
+%% Fisher information demo
+xRange = 0.8 : 0.01 : 40;
+totalFisher = zeros(1, length(xRange));
+
+figure(); hold on; yyaxis left
+for idx = 1 : 20
+    parameter = fitPara(idx, :);
+    tuning = @(stim) tuningGauss(parameter(1), parameter(2), parameter(3), parameter(4), parameter(5), stim);
+    
+    % Fisher information
+    [fx, dfdx] = tuning(xRange);
+    fisher = abs(dfdx) ./ sqrt(fx);
+    
+    totalFisher = totalFisher + fisher .^ 2;
+    plot(log(xRange), fisher .^ 2, '-r', 'LineWidth', 0.5);
+    
+end
+
+yyaxis right
+plot(log(xRange), totalFisher, '-k', 'LineWidth', 2);
+
+xtickPos = [1, 2, 4, 8, 16, 32];
+xticks(log(xtickPos));
+xticklabels(xtickPos);
+xlim([-0.22, 3.7]);
+set(gca, 'TickDir', 'out');
+
