@@ -99,7 +99,7 @@ if logSpace
     line = plot(log(priorSupport), log(prior(priorSupport)), style, 'LineWidth', 2, 'Color', lineColor);
     
     mdl = fitlm(log(priorSupport), log(prior(priorSupport)));
-    mdl.Coefficients{2, 1};
+    mdl.Coefficients{2, 1}
     
     labelPos = [0.05, 0.1, 0.25, 0.5, 1, 2.0, 4.0, 8.0, 20, 40];
     xticks(log(labelPos));
