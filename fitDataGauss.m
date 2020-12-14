@@ -173,3 +173,35 @@ xticklabels(xtickPos);
 xlim([-0.22, 3.7]);
 set(gca, 'TickDir', 'out');
 
+%% Fisher information demo (log space)
+xRange = 0.5 : 0.01 : 40;
+totalFisher = zeros(1, length(xRange));
+
+figure(); hold on; yyaxis left
+for idx = 1 : 20
+    parameter = fitPara(idx, :);
+    tuning = @(stim) tuningGauss(parameter(1), parameter(2), parameter(3), parameter(4), parameter(5), stim);
+    
+    % Fisher information
+    [fx, dfdx] = tuning(xRange);
+    fisher = abs(dfdx) ./ sqrt(fx);
+    
+    totalFisher = totalFisher + fisher .^ 2;
+    plot(log(xRange), fisher .^ 2, '-', 'LineWidth', 0.5, 'Color', ones(1,3) * 0.5);
+    
+end
+ylim([1e-8, 1e2]);
+yticks([1e-8, 1e-6, 1e-4, 1e-2, 1, 1e2]);
+set(gca, 'YScale', 'log');
+
+yyaxis right
+plot(log(xRange), totalFisher, '-r', 'LineWidth', 2);
+
+xtickPos = [1, 2, 4, 8, 16, 32];
+xticks(log(xtickPos));
+xticklabels(xtickPos);
+xlim([-0.22, 3.7]);
+set(gca, 'TickDir', 'out');
+set(gca, 'YScale', 'log');
+
+box off; grid off;
