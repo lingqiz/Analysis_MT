@@ -41,6 +41,25 @@ yyaxis right
 fisher = abs(dfdx) ./ sqrt(fx);
 plot(xRange, fisher .^ 2, '-r', 'LineWidth', 2);
 
+%% Sample a few neuron and plot the tuning curves
+nPlot = 20;
+figure();
+for count = 1:10
+    idx = randi(nNeuron);
+    neurData = neuroFile{idx};
+    
+    nRand = 0;
+    [parameter, func] = fitGauss(neurData.speed_values, neurData.response_values, 'rmse', 'fminsearch', nRand);
+    
+    axisLim = xlim;
+    xRange = 0.0 : 0.05 : 35;
+    
+    hold on;
+    plot(xRange, func(xRange) / max(func(xRange)), 'LineWidth', 1.5, 'Color', ones(1,3) * 0.5);
+    set(gca, 'TickDir', 'out');
+end
+ylim([-0.1, 1.2]);
+
 %% Fit to the entire population of neurons
 nNeuron = 470;
 nParas  = 5;
