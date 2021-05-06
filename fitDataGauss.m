@@ -209,9 +209,10 @@ for idx = 1 : 20
     plot(log(xRange), fisher .^ 2, '-', 'LineWidth', 0.5, 'Color', ones(1,3) * 0.5);
     
 end
-ylim([1e-8, 1e2]);
+ylim([1e-8, 5e2]);
 yticks([1e-8, 1e-6, 1e-4, 1e-2, 1, 1e2]);
 set(gca, 'YScale', 'log');
+set(gca, 'YMinorTick', 'off');
 
 yyaxis right
 plot(log(xRange), totalFisher, '-r', 'LineWidth', 2);
@@ -220,7 +221,9 @@ xtickPos = [1, 2, 4, 8, 16, 32];
 xticks(log(xtickPos));
 xticklabels(xtickPos);
 xlim([-0.22, 3.7]);
+ylim([1e-8, 5e2]);
 set(gca, 'TickDir', 'out');
 set(gca, 'YScale', 'log');
+set(gca, 'YMinorTick', 'off');
 
 box off; grid off;
