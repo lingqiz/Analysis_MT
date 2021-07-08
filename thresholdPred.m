@@ -88,41 +88,19 @@ load('./MappingFit/new_para_map_fit/new_para_Feb9.mat');
 
 nSub = 5;
 allPara = [paraSub1; paraSub2; paraSub3; paraSub4; paraSub5];
-scale = [0.00425, 0.003, 0.0, 0.00425, 0.00425];
+scale = [0.0048, 0.003, 0.0, 0.005, 0.0045];
 
+frac = 0;
 for i = [1, 2, 4, 5]
     para = allPara(i, :);
-    plotThreahold(para, scale(i), false);
+    frac = frac + plotThreahold(para, scale(i), false);
 end
 
-% avg
-scale = 0.0050;
-UB = 40; priorSupport = (0.1 : 0.001 : UB);
-density = zeros(size(priorSupport));
+frac = frac / 4;
+UB = 40; priorSupport = (0.2 : 0.001 : UB);
+plot(priorSupport, frac);
 
-for i = 1 : nSub
-    para = allPara(i, :);
-        
-    c0 = para(1); c1 = para(2); c2 = para(3);
-    domain    = -100 : 0.01 : 100;
-
-    priorUnm  = 1.0 ./ ((abs(domain) .^ c0) + c1) + c2;
-    nrmConst  = 1.0 / (trapz(domain, priorUnm));
-    prior = @(support) (1.0 ./ ((abs(support) .^ c0) + c1) + c2) * nrmConst;
-
-    density = density + prior(priorSupport);
-end
-density = density / nSub;
-fraction = 1 ./ prior(priorSupport) ./ priorSupport * scale;
-
-logSpace = false;
-if logSpace
-    plot(log(priorSupport), fraction);
-else
-    plot(priorSupport, fraction);
-end
-
-legend({'1', '2', '3', '4', 'Com'}, 'Location', 'northeast');
+legend({'1', '2', '3', '4', 'Avg'}, 'Location', 'northeast');
 
 grid off;
 xlabel('Speed');
@@ -136,7 +114,7 @@ load('Bruyn_Data.csv');
 plot((Bruyn_Data(1:7, 1)), Bruyn_Data(1:7, 2), 's');
 
 %% Helper function
-function plotThreahold(para, scale, logSpace)
+function fraction = plotThreahold(para, scale, logSpace)
 c0 = para(1); c1 = para(2); c2 = para(3);
 domain    = -100 : 0.01 : 100;
 
