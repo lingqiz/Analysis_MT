@@ -4,23 +4,6 @@ plotlabOBJ.applyRecipe(...
     'figureWidthInches', 18, ...
     'figureHeightInches', 8);
 
-%% Plot Prior
-figure; hold on;
-load('./MappingFit/new_para_map_fit/new_para_Feb9.mat');
-
-nSub = 5;
-allPara = [paraSub1; paraSub2; paraSub3; paraSub4; paraSub5];
-
-for i = [1, 2, 4, 5]
-    para = allPara(i, :);
-    l1 = plotPrior(para, true, false, '-', ones(1, 3) * 0.8);
-end
-
-load('CombinedFit/combinedMapping.mat');
-l2 = plotPrior(paraSub, true, false, '-', ones(1, 3) * 0.1);
-
-priorXlim = xlim();
-
 %% Plot Threshold 1 
 figure; subplot(1, 2, 1); hold on;
 load('./MappingFit/new_para_map_fit/new_para_Feb9.mat');
@@ -99,20 +82,45 @@ plotlabOBJ.applyRecipe(...
     'figureWidthInches', 9, ...
     'figureHeightInches', 8);
 
+%%
 figure(); hold on;
 load('./MappingFit/new_para_map_fit/new_para_Feb9.mat');
 
 nSub = 5;
 allPara = [paraSub1; paraSub2; paraSub3; paraSub4; paraSub5];
-scale = 0.00425;
+scale = [0.00425, 0.003, 0.0, 0.00425, 0.00425];
 
 for i = [1, 2, 4, 5]
     para = allPara(i, :);
-    plotThreahold(para, scale, false);
+    plotThreahold(para, scale(i), false);
 end
 
-load('CombinedFit/combinedMapping.mat');
-plotThreahold(paraSub, scale, false);
+% avg
+scale = 0.0050;
+UB = 40; priorSupport = (0.1 : 0.001 : UB);
+density = zeros(size(priorSupport));
+
+for i = 1 : nSub
+    para = allPara(i, :);
+        
+    c0 = para(1); c1 = para(2); c2 = para(3);
+    domain    = -100 : 0.01 : 100;
+
+    priorUnm  = 1.0 ./ ((abs(domain) .^ c0) + c1) + c2;
+    nrmConst  = 1.0 / (trapz(domain, priorUnm));
+    prior = @(support) (1.0 ./ ((abs(support) .^ c0) + c1) + c2) * nrmConst;
+
+    density = density + prior(priorSupport);
+end
+density = density / nSub;
+fraction = 1 ./ prior(priorSupport) ./ priorSupport * scale;
+
+logSpace = false;
+if logSpace
+    plot(log(priorSupport), fraction);
+else
+    plot(priorSupport, fraction);
+end
 
 legend({'1', '2', '3', '4', 'Com'}, 'Location', 'northeast');
 
