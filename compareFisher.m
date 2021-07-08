@@ -12,8 +12,8 @@ load('./MappingFit/new_para_map_fit/new_para_Feb9.mat');
 subplot(1, 2, 1); hold on;
 colors = get(gca,'colororder');
 
-nSub = 5;
-allPara = [paraSub1; paraSub2; paraSub3; paraSub4; paraSub5];
+nSub = 4;
+allPara = [paraSub1; paraSub2; paraSub4; paraSub5];
 
 for i = 1 : nSub
     para = allPara(i, :);
